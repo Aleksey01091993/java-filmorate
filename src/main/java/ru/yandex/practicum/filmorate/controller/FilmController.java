@@ -1,12 +1,10 @@
-package controller;
+package ru.yandex.practicum.filmorate.controller;
 
-import exeption.ValidationException;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import model.Film;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.Film;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,17 +15,28 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequestMapping(value = "/films")
 public class FilmController {
-    private Map<String, Film> films = new HashMap<>();
+    private final Map<String, Film> films = new HashMap<>();
 
 
-    @GetMapping("/films")
+    @GetMapping()
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
 
-    @PostMapping(value = "/film")
-    public Film add(@RequestBody Film film) {
+    @PostMapping()
+    public Film add(@Validated @RequestBody Film film) {
+        return check(film);
+    }
+
+    @PostMapping()
+    public Film update(@Validated @RequestBody Film film) {
+        return check(film);
+    }
+
+    private Film check (Film film) {
+        log.info("лог.пришел запрос Post /films с телом: request");
         if (film.getName().isEmpty()) {
             log.debug("название не может быть пустым");
             throw new ValidationException("название не может быть пустым");
@@ -42,6 +51,7 @@ public class FilmController {
             throw new ValidationException("продолжительность фильма должна быть положительной");
         } else {
             films.put(film.getName(), film);
+            log.info("отправлен ответ с телом: response");
             return film;
         }
     }

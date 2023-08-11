@@ -1,8 +1,9 @@
 package controller;
 
-import exeption.ValidationException;
-import model.User;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.controller.UserController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +15,7 @@ class UserControllerTest {
     @Test
     void getUsers() {
         UserController userController = new UserController();
-        User user = new User(0, "ghf@mail.ru", "lex", "lex", LocalDate.of(1993, 9, 01));
+        User user = new User("ghf@mail.ru", "lex", "lex", LocalDate.of(1993, 9, 01));
         userController.add(user);
         List<User> users = userController.getUsers();
         User user1 = users.get(0);
@@ -24,35 +25,35 @@ class UserControllerTest {
     @Test
     void user() {
         UserController userController = new UserController();
-        User user = new User(0, "ghfmail.ru", "lex", "lex", LocalDate.of(1993, 9, 01));
+        User user = new User("ghfmail.ru", "lex", "lex", LocalDate.of(1993, 9, 01));
         try {
             userController.add(user);
         } catch (ValidationException e) {
             String message = e.getMessage();
             assertEquals(message, "электронная почта не может быть пустой и должна содержать символ @");
         }
-        User user1 = new User(0, "", "lex", "lex", LocalDate.of(1993, 9, 1));
+        User user1 = new User("", "lex", "lex", LocalDate.of(1993, 9, 1));
         try {
             userController.add(user1);
         } catch (ValidationException e) {
             String message = e.getMessage();
             assertEquals(message, "электронная почта не может быть пустой и должна содержать символ @");
         }
-        User user2 = new User(0, "ghf@mail.ru", "le x", "lex", LocalDate.of(1993, 9, 1));
+        User user2 = new User("ghf@mail.ru", "le x", "lex", LocalDate.of(1993, 9, 1));
         try {
             userController.add(user2);
         } catch (ValidationException e) {
             String message = e.getMessage();
             assertEquals(message, "логин не может быть пустым и содержать пробелы");
         }
-        User user3 = new User(0, "ghf@mail.ru", "", "lex", LocalDate.of(1993, 9, 1));
+        User user3 = new User("ghf@mail.ru", "", "lex", LocalDate.of(1993, 9, 1));
         try {
             userController.add(user3);
         } catch (ValidationException e) {
             String message = e.getMessage();
             assertEquals(message, "логин не может быть пустым и содержать пробелы");
         }
-        User user4 = new User(0, "ghf@mail.ru", "wed", "", LocalDate.of(1993, 9, 1));
+        User user4 = new User("ghf@mail.ru", "wed", "", LocalDate.of(1993, 9, 1));
         try {
             userController.add(user4);
         } catch (ValidationException e) {

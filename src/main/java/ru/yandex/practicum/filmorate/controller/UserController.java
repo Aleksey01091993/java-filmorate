@@ -1,12 +1,10 @@
-package controller;
+package ru.yandex.practicum.filmorate.controller;
 
-import exeption.ValidationException;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.User;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,16 +15,27 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequestMapping(value = "/users")
 public class UserController {
-    private Map<String, User> users = new HashMap<>();
+    private final Map<String, User> users = new HashMap<>();
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
 
-    @PostMapping(value = "/user")
-    public User add(@RequestBody User user) {
+    @PostMapping()
+    public User add(@Validated @RequestBody User user) {
+        return check(user);
+    }
+
+    @PostMapping()
+    public User update(@Validated @RequestBody User user) {
+        return check(user);
+    }
+
+    private User check(User user) {
+        log.info("лог.пришел запрос Post /films с телом: request");
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.debug("электронная почта не может быть пустой и должна содержать символ @");
             throw new ValidationException("электронная почта не может быть пустой и должна содержать символ @");
@@ -44,6 +53,7 @@ public class UserController {
             throw new ValidationException("дата рождения не может быть в будущем");
         } else {
             users.put(user.getName(), user);
+            log.info("отправлен ответ с телом: response");
             return user;
         }
     }
