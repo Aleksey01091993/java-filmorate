@@ -61,9 +61,11 @@ class UserControllerTest {
             assertEquals(message, "имя для отображения может быть пустым — в таком случае будет использован логин");
             List<User> users = userController.getUsers();
             User user5 = users.get(0);
-            assertEquals(user5, new User(user4.getId(), user4.getEmail(), user4.getLogin(), user4.getLogin(), user4.getBirthday()));
+            User user7 = user4;
+            user7.setName(user4.getLogin());
+            assertEquals(user5, user7);
         }
-        User user6 = new User(0, "ghf@mail.ru", "dsdwe", "lex", LocalDate.of(3000, 9, 1));
+        User user6 = new User("ghf@mail.ru", "dsdwe", "lex", LocalDate.of(3000, 9, 1));
         try {
             userController.add(user6);
         } catch (ValidationException e) {

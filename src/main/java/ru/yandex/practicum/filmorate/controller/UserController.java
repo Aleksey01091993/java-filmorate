@@ -17,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
-    private final Map<String, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping()
     public List<User> getUsers() {
@@ -43,16 +43,15 @@ public class UserController {
             log.debug("логин не может быть пустым и содержать пробелы");
             throw new ValidationException("логин не может быть пустым и содержать пробелы");
         } else if (user.getName().isEmpty()) {
-            User user1 = new User(user.getId(), user.getEmail(), user.getLogin(), user.getLogin(),
-                    user.getBirthday());
-            users.put(user1.getName(), user1);
+            user.setName(user.getLogin());
+            users.put(user.getId(), user);
             log.debug("имя для отображения может быть пустым — в таком случае будет использован логин");
             throw new ValidationException("имя для отображения может быть пустым — в таком случае будет использован логин");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             log.debug("дата рождения не может быть в будущем");
             throw new ValidationException("дата рождения не может быть в будущем");
         } else {
-            users.put(user.getName(), user);
+            users.put(user.getId(), user);
             log.info("отправлен ответ с телом: response");
             return user;
         }
