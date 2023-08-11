@@ -17,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
-    private final Map<String, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new HashMap<>();
 
 
     @GetMapping()
@@ -50,7 +50,7 @@ public class FilmController {
             log.debug("продолжительность фильма должна быть положительной");
             throw new ValidationException("продолжительность фильма должна быть положительной");
         } else {
-            films.put(film.getName(), film);
+            films.put(film.getId(), film);
             log.info("отправлен ответ с телом: response");
             return film;
         }
