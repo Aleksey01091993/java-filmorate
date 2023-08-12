@@ -17,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
+    private static long counter = 0L;
     private final Map<Long, Film> films = new HashMap<>();
 
 
@@ -26,16 +27,25 @@ public class FilmController {
     }
 
     @PostMapping()
-    public Film add(@Validated @RequestBody Film film) {
-        return check(film);
+    public Film add(@RequestBody Film film) {
+        check(film);
+        final long id = ++counter;
+        film.setId(id);
+        films.put(id, film);
+        return film;
     }
 
     @PostMapping()
-    public Film update(@Validated @RequestBody Film film) {
-        return check(film);
+    public Film update(@RequestBody Film film) {
+        if (films.get(film.getId()) == null) {
+            throw new ValidationException("Not found key: " + film.getId());
+        }
+        check(film);
+        films.put(film.getId(), film);
+        return film;
     }
 
-    private Film check (Film film) {
+    private void check (Film film) {
         log.info("лог.пришел запрос Post /films с телом: request");
         if (film.getName().isEmpty()) {
             log.debug("название не может быть пустым");
@@ -50,9 +60,7 @@ public class FilmController {
             log.debug("продолжительность фильма должна быть положительной");
             throw new ValidationException("продолжительность фильма должна быть положительной");
         } else {
-            films.put(film.getId(), film);
             log.info("отправлен ответ с телом: response");
-            return film;
         }
     }
 }

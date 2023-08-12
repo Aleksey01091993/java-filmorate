@@ -17,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
+    private static long counter = 0L;
     private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping()
@@ -25,16 +26,25 @@ public class UserController {
     }
 
     @PostMapping()
-    public User add(@Validated @RequestBody User user) {
-        return check(user);
+    public User add(@RequestBody User user) {
+        check(user);
+        final long id = ++counter;
+        user.setId(id);
+        users.put(id, user);
+        return user;
     }
 
     @PostMapping()
-    public User update(@Validated @RequestBody User user) {
-        return check(user);
+    public User update(@RequestBody User user) {
+        if (users.get(user.getId()) == null) {
+            throw new ValidationException("Not found key: " + user.getId());
+        }
+        check(user);
+        users.put(user.getId(), user);
+        return user;
     }
 
-    private User check(User user) {
+    private void check(User user) {
         log.info("лог.пришел запрос Post /films с телом: request");
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.debug("электронная почта не может быть пустой и должна содержать символ @");
@@ -51,9 +61,7 @@ public class UserController {
             log.debug("дата рождения не может быть в будущем");
             throw new ValidationException("дата рождения не может быть в будущем");
         } else {
-            users.put(user.getId(), user);
             log.info("отправлен ответ с телом: response");
-            return user;
         }
     }
 }

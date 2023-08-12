@@ -7,13 +7,17 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 public class Film {
-    private static long idFilm = 0;
-
-    private final long id = ++idFilm;
+    private long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private Duration duration;
+
+    public Film(String name, String description, LocalDate releaseDate, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
 }

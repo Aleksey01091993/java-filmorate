@@ -6,14 +6,17 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 public class User {
-    private static long userId = 0;
-
-
-    private final long id = ++userId;
+    private long id;
     private String email;
     private String login;
     private String name;
     private LocalDate birthday;
+
+    public User(String email, String login, String name, LocalDate birthday) {
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
 }
