@@ -35,7 +35,7 @@ public class FilmController {
         return film;
     }
 
-    @PostMapping()
+    @PutMapping()
     public Film update(@RequestBody Film film) {
         if (films.get(film.getId()) == null) {
             throw new ValidationException("Not found key: " + film.getId());

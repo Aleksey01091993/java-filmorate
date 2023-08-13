@@ -34,7 +34,7 @@ public class UserController {
         return user;
     }
 
-    @PostMapping()
+    @PutMapping()
     public User update(@RequestBody User user) {
         if (users.get(user.getId()) == null) {
             throw new ValidationException("Not found key: " + user.getId());
