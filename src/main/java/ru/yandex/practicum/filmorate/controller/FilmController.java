@@ -90,7 +90,7 @@ public class FilmController {
         }
     }
 
-    @ExceptionHandler({ClassNotFoundException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFound(final ClassNotFoundException e) {
         return e.getMessage();
@@ -98,8 +98,8 @@ public class FilmController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> validationException (final ValidationException e) {
-        return Map.of("validationException", e.getMessage());
+    public String validationException (final ValidationException e) {
+        return e.getMessage();
     }
 
 
