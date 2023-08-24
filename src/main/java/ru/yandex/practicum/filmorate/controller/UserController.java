@@ -53,16 +53,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable Map<String, Long> path) {
-        long userId = path.get("id");
-        long friendId = path.get("friendId");
+    public void addFriend(@PathVariable Map<String, String> path) {
+        long userId = Long.parseLong(path.get("id"));
+        long friendId = Long.parseLong(path.get("friendId"));
         service.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable Map<String, Long> path) {
-        long userId = path.get("id");
-        long friendId = path.get("friendId");
+    public void deleteFriend(@PathVariable Map<String, String> path) {
+        long userId = Long.parseLong(path.get("id"));
+        long friendId = Long.parseLong(path.get("friendId"));
         service.deleteFriend(userId, friendId);
     }
 
@@ -72,9 +72,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> mutualFriends(@PathVariable Map<String, Long> path) {
-        long userId = path.get("id");
-        long friendId = path.get("otherId");
+    public List<User> mutualFriends(@PathVariable Map<String, String> path) {
+        long userId = Long.parseLong(path.get("id"));
+        long friendId = Long.parseLong(path.get("otherId"));
         return service.mutualFriends(userId, friendId);
     }
 

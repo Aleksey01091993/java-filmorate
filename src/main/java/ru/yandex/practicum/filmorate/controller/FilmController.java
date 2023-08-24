@@ -53,22 +53,22 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable Map<String, Long> path) {
-        long filmId = path.get("id");
-        long userId = path.get("userId");
+    public void addLike(@PathVariable Map<String, String> path) {
+        long filmId = Long.parseLong(path.get("id"));
+        long userId = Long.parseLong(path.get("userId"));
         service.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable Map<String, Long> path) {
-        long filmId = path.get("id");
-        long userId = path.get("userId");
+    public void deleteLike(@PathVariable Map<String, String> path) {
+        long filmId = Long.parseLong(path.get("id"));
+        long userId = Long.parseLong(path.get("userId"));
         service.deleteLike(filmId, userId);
     }
 
     @GetMapping("/popular?count={count}")
-    public List<Film> getTopFilms(@PathVariable(required = false) Integer count) {
-        return service.topFilms(count);
+    public List<Film> getTopFilms(@PathVariable(required = false) String count) {
+        return service.topFilms(Integer.parseInt(count));
     }
 
     private void check (Film film) {
