@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.User;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -42,6 +41,11 @@ public class UserController {
         check(user);
         users.put(user.getId(), user);
         return user;
+    }
+
+    @PutMapping()
+    public User addFriend(long id) {
+
     }
 
     private void check(User user) {
