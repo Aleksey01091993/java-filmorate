@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -96,4 +97,12 @@ public class UserController {
             log.info("отправлен ответ с телом: response");
         }
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> validationException (final ValidationException e) {
+        return Map.of("validationException", e.getLocalizedMessage());
+    }
+
+
 }
