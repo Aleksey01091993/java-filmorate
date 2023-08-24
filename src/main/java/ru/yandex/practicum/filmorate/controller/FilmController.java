@@ -1,9 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,16 +18,22 @@ import java.util.Map;
 
 
 @Slf4j
+@Component
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
     private static long counter = 0L;
-    private final Map<Long, Film> films = new HashMap<>();
-                                            lfdmgdlrfmdl;
+    private final User user;
+    private final FilmStorage storage;
+
+    public FilmController(FilmService service) {
+        this.user = service.getUser();
+        this.storage = service.getStorage();
+    }
 
     @GetMapping()
     public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+        return storage.getFilms();
     }
 
     @PostMapping()
@@ -30,17 +41,14 @@ public class FilmController {
         check(film);
         final long id = ++counter;
         film.setId(id);
-        films.put(id, film);
+        storage.add(film);
         return film;
     }
 
     @PutMapping()
     public Film update(@RequestBody Film film) {
-        if (films.get(film.getId()) == null) {
-            throw new ValidationException("Not found key: " + film.getId());
-        }
         check(film);
-        films.put(film.getId(), film);
+        storage.update(film);
         return film;
     }
 
