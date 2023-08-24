@@ -26,6 +26,7 @@ public class FilmController {
     private final User user;
     private final FilmStorage storage;
 
+    @Autowired
     public FilmController(FilmService service) {
         this.user = service.getUser();
         this.storage = service.getStorage();
