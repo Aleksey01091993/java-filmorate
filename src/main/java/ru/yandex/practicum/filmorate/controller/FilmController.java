@@ -92,7 +92,7 @@ public class FilmController {
     @ExceptionHandler({ClassNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String notFound(final ClassNotFoundException e) {
-        return new String(e.getMessage());
+        return e.getMessage();
     }
 
     @ExceptionHandler
@@ -106,6 +106,6 @@ public class FilmController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String serverError(final Throwable e) {
-        return new String(e.getMessage());
+        return e.getMessage();
     }
 }
