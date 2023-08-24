@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -86,5 +87,25 @@ public class FilmController {
         } else {
             log.info("отправлен ответ с телом: response");
         }
+    }
+
+    @ExceptionHandler({ClassNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String notFound(final ClassNotFoundException e) {
+        return new String(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> validationException (final ValidationException e) {
+        return Map.of("validationException", e.getMessage());
+    }
+
+
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String serverError(final Throwable e) {
+        return new String(e.getMessage());
     }
 }

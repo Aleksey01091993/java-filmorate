@@ -98,11 +98,23 @@ public class UserController {
         }
     }
 
+    @ExceptionHandler({ClassNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String notFound(final ClassNotFoundException e) {
+        return new String(e.getMessage());
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> validationException (final ValidationException e) {
-        return Map.of("validationException", e.getLocalizedMessage());
+        return Map.of("validationException", e.getMessage());
     }
 
 
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String serverError(final Throwable e) {
+        return new String(e.getMessage());
+    }
 }
