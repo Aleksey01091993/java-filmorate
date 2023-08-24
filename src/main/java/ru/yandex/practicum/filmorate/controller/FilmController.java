@@ -23,12 +23,12 @@ import java.util.Map;
 @RequestMapping(value = "/films")
 public class FilmController {
     private static long counter = 0L;
-    private final User user;
     private final FilmStorage storage;
+    private final FilmService service;
 
     @Autowired
     public FilmController(FilmService service) {
-        this.user = service.getUser();
+        this.service = service;
         this.storage = service.getStorage();
     }
 
@@ -51,6 +51,25 @@ public class FilmController {
         check(film);
         storage.update(film);
         return film;
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Map<String, Long> path) {
+        long filmId = path.get("id");
+        long userId = path.get("userId");
+        service.addLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Map<String, Long> path) {
+        long filmId = path.get("id");
+        long userId = path.get("userId");
+        service.deleteLike(filmId, userId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    public List<Film> getTopFilms(@PathVariable(required = false) Integer count) {
+        return service.topFilms(count);
     }
 
     private void check (Film film) {
