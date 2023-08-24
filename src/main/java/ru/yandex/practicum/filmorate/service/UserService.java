@@ -11,35 +11,40 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final User user;
     private final UserStorage storage;
 
     @Autowired
-    public UserService(User user, UserStorage storage) {
-        this.user = user;
+    public UserService(UserStorage storage) {
         this.storage = storage;
     }
 
-    public User addFriend(long id) {
-        user.getFriends().add(id);
-        storage.update(user);
-        storage.getUsers().get((int) id).getFriends().add(id);
-        return user;
+    public void addFriend(long userId, long friendId) {
+        storage.getUsers().get((int) userId).getFriends().add(friendId);
+        storage.getUsers().get((int) friendId).getFriends().add(userId);
     }
 
-    public User deleteFriend(long id) {
-        user.getFriends().remove(id);
-        storage.update(user);
-        storage.getUsers().get((int) id).getFriends().remove(id);
-        return user;
+    public void deleteFriend(long userId, long friendId) {
+        storage.getUsers().get((int) userId).getFriends().remove(friendId);
+        storage.getUsers().get((int) friendId).getFriends().remove(userId);
     }
 
-    public List<User> mutualFriends(long id) {
+    public List<User> friends(long userId) {
         List<User> users = new ArrayList<>();
         for (User u: storage.getUsers()) {
             long ids = u.getId();
-            if (user.getFriends().contains(ids) &&
-                storage.getUsers().get((int) id).getFriends().contains(ids)) {
+            if (storage.getUsers().get((int) userId).getFriends().contains(ids)) {
+                users.add(u);
+            }
+        }
+        return users;
+    }
+
+    public List<User> mutualFriends(long userId, long friendId) {
+        List<User> users = new ArrayList<>();
+        for (User u: storage.getUsers()) {
+            long ids = u.getId();
+            if (storage.getUsers().get((int) userId).getFriends().contains(ids) &&
+                    storage.getUsers().get((int) friendId).getFriends().contains(ids)) {
                 users.add(u);
             }
         }
@@ -50,7 +55,4 @@ public class UserService {
         return storage;
     }
 
-    public User getUser() {
-        return user;
-    }
 }
