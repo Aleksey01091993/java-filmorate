@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,8 +26,8 @@ public class FilmController {
     private final FilmService service;
 
     @Autowired
-    public FilmController(FilmService service) {
-        this.service = service;
+    public FilmController() {
+        this.service = new FilmService(new InMemoryFilmStorage());
         this.storage = service.getStorage();
     }
 
