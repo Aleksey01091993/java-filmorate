@@ -22,18 +22,21 @@ import java.util.Map;
 @RequestMapping(value = "/films")
 public class FilmController {
     private static long counter = 0L;
-    private final FilmStorage storage;
     private final FilmService service;
 
     @Autowired
-    public FilmController() {
-        this.service = new FilmService(new InMemoryFilmStorage());
-        this.storage = service.getStorage();
+    public FilmController(FilmService filmService) {
+        this.service = filmService;
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable long id) {
+        return service.getFilm(id);
     }
 
     @GetMapping()
     public List<Film> getFilms() {
-        return storage.getFilms();
+        return service.getFilms();
     }
 
     @PostMapping()
@@ -41,34 +44,30 @@ public class FilmController {
         check(film);
         final long id = ++counter;
         film.setId(id);
-        storage.add(film);
+        service.add(film);
         return film;
     }
 
     @PutMapping()
     public Film update(@RequestBody Film film) {
         check(film);
-        storage.update(film);
+        service.update(film);
         return film;
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable Map<String, String> path) {
-        long filmId = Long.parseLong(path.get("id"));
-        long userId = Long.parseLong(path.get("userId"));
-        service.addLike(filmId, userId);
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
+        service.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable Map<String, String> path) {
-        long filmId = Long.parseLong(path.get("id"));
-        long userId = Long.parseLong(path.get("userId"));
-        service.deleteLike(filmId, userId);
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        service.deleteLike(id, userId);
     }
 
     @GetMapping("/popular?count={count}")
-    public List<Film> getTopFilms(@PathVariable(required = false) String count) {
-        return service.topFilms(Integer.parseInt(count));
+    public List<Film> getTopFilms(@PathVariable(required = false) int count) {
+        return service.topFilms(count);
     }
 
     private void check (Film film) {

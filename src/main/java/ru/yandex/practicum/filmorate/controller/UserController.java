@@ -22,18 +22,16 @@ import java.util.Map;
 @RequestMapping(value = "/users")
 public class UserController {
     private static long counter = 0L;
-    private final UserStorage storage;
     private final UserService service;
 
     @Autowired
-    public UserController() {
-        this.service = new UserService(new InMemoryUserStorage());
-        this.storage = service.getStorage();
+    public UserController(UserService service) {
+        this.service = service;
     }
 
     @GetMapping()
     public List<User> getUsers() {
-        return storage.getUsers();
+        return service.getUsers();
     }
 
     @PostMapping()
@@ -41,29 +39,30 @@ public class UserController {
         check(user);
         final long id = ++counter;
         user.setId(id);
-        storage.add(user);
+        service.add(user);
         return user;
     }
 
     @PutMapping()
     public User update(@RequestBody User user) {
         check(user);
-        storage.update(user);
+        service.update(user);
         return user;
     }
 
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable long id) {
+        return service.getUser(id);
+    }
+
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable Map<String, String> path) {
-        long userId = Long.parseLong(path.get("id"));
-        long friendId = Long.parseLong(path.get("friendId"));
-        service.addFriend(userId, friendId);
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable Map<String, String> path) {
-        long userId = Long.parseLong(path.get("id"));
-        long friendId = Long.parseLong(path.get("friendId"));
-        service.deleteFriend(userId, friendId);
+    public void deleteFriend(@PathVariable long id, long friendId) {
+        service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
@@ -72,10 +71,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> mutualFriends(@PathVariable Map<String, String> path) {
-        long userId = Long.parseLong(path.get("id"));
-        long friendId = Long.parseLong(path.get("otherId"));
-        return service.mutualFriends(userId, friendId);
+    public List<User> mutualFriends(@PathVariable long id, @PathVariable long otherId) {
+        return service.mutualFriends(id, otherId);
     }
 
 
