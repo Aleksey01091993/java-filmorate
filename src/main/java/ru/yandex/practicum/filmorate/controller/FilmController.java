@@ -16,9 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
-    ////////////
-    private static long counter = 0L;
-    private final Map<Long, Film> films = new HashMap<>();
 
 
     @GetMapping()
