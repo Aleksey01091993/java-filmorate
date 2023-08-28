@@ -41,15 +41,13 @@ public class FilmController {
     @PostMapping()
     public Film add(@Validated @RequestBody Film film) {
         check(film);
-        service.add(film);
-        return film;
+        return service.add(film);
     }
 
     @PutMapping()
     public Film update(@Validated @RequestBody Film film) {
         check(film);
-        service.update(film);
-        return film;
+        return service.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")

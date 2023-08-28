@@ -32,15 +32,13 @@ public class UserController {
     @PostMapping()
     public User add(@RequestBody User user) {
         check(user);
-        service.add(user);
-        return user;
+        return service.add(user);
     }
 
     @PutMapping()
     public User update(@RequestBody User user) {
         check(user);
-        service.update(user);
-        return user;
+        return service.update(user);
     }
 
     @GetMapping("/{id}")
