@@ -2,12 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exeption.ErrorHandler;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -30,12 +31,14 @@ public class UserController {
 
     @PostMapping()
     public User add(@RequestBody User user) {
+        check(user);
         service.add(user);
         return user;
     }
 
     @PutMapping()
     public User update(@RequestBody User user) {
+        check(user);
         service.update(user);
         return user;
     }
@@ -63,6 +66,26 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> mutualFriends(@PathVariable long id, @PathVariable long otherId) {
         return service.mutualFriends(id, otherId);
+    }
+
+    private void check(User user) {
+        log.info("лог.пришел запрос Post /Users с телом: request");
+        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
+            log.debug("электронная почта не может быть пустой и должна содержать символ @");
+            throw new ValidationException("электронная почта не может быть пустой и должна содержать символ @");
+        } else if (user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
+            log.debug("логин не может быть пустым и содержать пробелы");
+            throw new ValidationException("логин не может быть пустым и содержать пробелы");
+        } else if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+            log.debug("имя для отображения может быть пустым — в таком случае будет использован логин");
+            throw new ValidationException("имя для отображения может быть пустым — в таком случае будет использован логин");
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.debug("дата рождения не может быть в будущем");
+            throw new ValidationException("дата рождения не может быть в будущем");
+        } else {
+            log.info("отправлен ответ с телом: response");
+        }
     }
 
 

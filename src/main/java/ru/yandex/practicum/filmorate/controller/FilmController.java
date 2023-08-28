@@ -3,11 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.exeption.ErrorHandler;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FilmService;
+// убрал лишние импорты
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,12 +39,14 @@ public class FilmController {
 
     @PostMapping()
     public Film add(@Validated @RequestBody Film film) {
+        check(film);
         service.add(film);
         return film;
     }
 
     @PutMapping()
     public Film update(@Validated @RequestBody Film film) {
+        check(film);
         service.update(film);
         return film;
     }
@@ -61,6 +64,25 @@ public class FilmController {
     @GetMapping("/popular?count={count}")
     public List<Film> getTopFilms(@PathVariable(required = false) int count) {
         return service.topFilms(count);
+    }
+
+    private void check (Film film) {
+        log.info("лог.пришел запрос Post /films с телом: request");
+        if (film.getName().isEmpty()) {
+            log.debug("название не может быть пустым");
+            throw new ValidationException("название не может быть пустым");
+        } else if (film.getDescription().length() > 200) {
+            log.debug("максимальная длина описания — 200 символов");
+            throw new ValidationException("максимальная длина описания — 200 символов");
+        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 27))) {
+            log.debug("дата релиза — не раньше 28.12.1895");
+            throw new ValidationException("дата релиза — не раньше 28.12.1895");
+        } else if (film.getDuration().isNegative() || film.getDuration().isZero()) {
+            log.debug("продолжительность фильма должна быть положительной");
+            throw new ValidationException("продолжительность фильма должна быть положительной");
+        } else {
+            log.info("отправлен ответ с телом: response");
+        }
     }
 
 

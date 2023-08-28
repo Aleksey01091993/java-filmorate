@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
@@ -25,13 +23,12 @@ public class FilmService {
     }
 
     public Film add(Film film) {
-        storage.add(film);
-        return film;
+        return storage.add(film);
     }
 
+
     public Film update(Film film) {
-        storage.update(film);
-        return film;
+        return storage.add(film);
     }
 
     public void addLike(long filmId, long userId) {
@@ -59,9 +56,6 @@ public class FilmService {
             films.add(sort.get(i));
         }
         return films;
-    }
-    public FilmStorage getStorage() {
-        return storage;
     }
 
 

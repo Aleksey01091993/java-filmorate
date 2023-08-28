@@ -27,13 +27,11 @@ public class UserService {
     }
 
     public User add(User user) {
-        storage.add(user);
-        return user;
+        return storage.add(user);
     }
 
     public User update(User user) {
-        storage.update(user);
-        return user;
+        return storage.update(user);
     }
 
     public void addFriend(long userId, long friendId) {
@@ -67,10 +65,6 @@ public class UserService {
             }
         }
         return users;
-    }
-
-    public UserStorage getStorage() {
-        return storage;
     }
 
 }
