@@ -17,6 +17,8 @@ import java.util.Map;
 @RequestMapping(value = "/films")
 public class FilmController {
 
+    private final FilmService service;
+
 
     @GetMapping()
     public List<Film> getFilms() {
