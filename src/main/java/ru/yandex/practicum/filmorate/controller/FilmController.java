@@ -65,7 +65,7 @@ public class FilmController {
         return service.topFilms(count);
     }
 
-    private void check (Film film) {
+    private void check(Film film) {
         log.info("лог.пришел запрос Post /films с телом: request");
         if (film.getName().isEmpty()) {
             log.debug("название не может быть пустым");
