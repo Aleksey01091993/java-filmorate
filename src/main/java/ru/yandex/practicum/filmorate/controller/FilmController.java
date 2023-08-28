@@ -1,47 +1,69 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ru.yandex.practicum.filmorate.exeption.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FilmService;
+// убрал лишние импорты
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
+@Component
 @RestController
 @RequestMapping(value = "/films")
 public class FilmController {
 
     private final FilmService service;
 
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.service = filmService;
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable long id) {
+        return service.getFilm(id);
+    }
 
     @GetMapping()
     public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+        return service.getFilms();
     }
 
     @PostMapping()
-    public Film add(@RequestBody Film film) {
+    public Film add(@Validated @RequestBody Film film) {
         check(film);
-        final long id = ++counter;
-        film.setId(id);
-        films.put(id, film);
+        service.add(film);
         return film;
     }
 
     @PutMapping()
-    public Film update(@RequestBody Film film) {
-        if (films.get(film.getId()) == null) {
-            throw new ValidationException("Not found key: " + film.getId());
-        }
+    public Film update(@Validated @RequestBody Film film) {
         check(film);
-        films.put(film.getId(), film);
+        service.update(film);
         return film;
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
+        service.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        service.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    public List<Film> getTopFilms(@PathVariable(required = false) int count) {
+        return service.topFilms(count);
     }
 
     private void check (Film film) {
@@ -62,4 +84,6 @@ public class FilmController {
             log.info("отправлен ответ с телом: response");
         }
     }
+
+
 }

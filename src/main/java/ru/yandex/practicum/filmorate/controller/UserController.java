@@ -1,55 +1,75 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ru.yandex.practicum.filmorate.exeption.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
+@Component
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
-    private static long counter = 0L;
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserService service;
+
+    @Autowired
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @GetMapping()
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return service.getUsers();
     }
 
     @PostMapping()
     public User add(@RequestBody User user) {
         check(user);
-        final long id = ++counter;
-        user.setId(id);
-        users.put(id, user);
+        service.add(user);
         return user;
     }
 
     @PutMapping()
     public User update(@RequestBody User user) {
-        if (users.get(user.getId()) == null) {
-            throw new ValidationException("Not found key: " + user.getId());
-        }
         check(user);
-        users.put(user.getId(), user);
+        service.update(user);
         return user;
     }
 
-    @PutMapping()
-    public User addFriend(long id) {
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable long id) {
+        return service.getUser(id);
+    }
 
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable long id, long friendId) {
+        service.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> friends(@PathVariable long id) {
+        return service.friends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> mutualFriends(@PathVariable long id, @PathVariable long otherId) {
+        return service.mutualFriends(id, otherId);
     }
 
     private void check(User user) {
-        log.info("лог.пришел запрос Post /films с телом: request");
+        log.info("лог.пришел запрос Post /Users с телом: request");
         if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.debug("электронная почта не может быть пустой и должна содержать символ @");
             throw new ValidationException("электронная почта не может быть пустой и должна содержать символ @");
@@ -58,7 +78,6 @@ public class UserController {
             throw new ValidationException("логин не может быть пустым и содержать пробелы");
         } else if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
-            users.put(user.getId(), user);
             log.debug("имя для отображения может быть пустым — в таком случае будет использован логин");
             throw new ValidationException("имя для отображения может быть пустым — в таком случае будет использован логин");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
@@ -68,4 +87,6 @@ public class UserController {
             log.info("отправлен ответ с телом: response");
         }
     }
+
+
 }
