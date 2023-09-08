@@ -1,20 +1,21 @@
 package ru.yandex.practicum.filmorate.exeption;
 
+
 public class ErrorResponse {
-        private final String error;
-        private final String description;
+    private final String error;
+    private final String description;
 
-        public ErrorResponse(String error, String description) {
-            this.error = error;
-            this.description = description;
-        }
+    public ErrorResponse(String error, String description) {
+        this.error = error;
+        this.description = description;
+    }
 
-        public String getError() {
-            return error;
-        }
+    public String getError() {
+        return error;
+    }
 
-        public String getDescription() {
-            return description;
-        }
+    public String getDescription() {
+        return description;
+    }
 
 }

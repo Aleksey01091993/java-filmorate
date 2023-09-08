@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 @Service
 public class FilmService {
     private final FilmStorage storage;
@@ -49,9 +51,7 @@ public class FilmService {
             ids = id;
         }
         List<Film> films = new ArrayList<>();
-        List<Film> sort = storage.getFilms().stream()
-                .sorted((o1, o2) -> o1.getLikes().size() - o2.getLikes().size())
-                .collect(Collectors.toList());
+        List<Film> sort = storage.getFilms().stream().sorted((o1, o2) -> o1.getLikes().size() - o2.getLikes().size()).collect(Collectors.toList());
         for (int i = 0; i < ids; i++) {
             films.add(sort.get(i));
         }
