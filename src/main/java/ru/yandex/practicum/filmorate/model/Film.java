@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
 import java.time.LocalDate;
