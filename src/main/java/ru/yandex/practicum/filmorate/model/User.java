@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Data
 public class User {
-    private long id;
+    private Integer id;
     @Email
     private String email;
     @NotBlank
@@ -23,7 +23,7 @@ public class User {
     @Future
     private LocalDate birthday;
     private boolean friendShip;
-    private Set<Long> friends;
+    private Set<Integer> friends;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;

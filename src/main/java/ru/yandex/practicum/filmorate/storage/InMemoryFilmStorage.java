@@ -14,9 +14,9 @@ import java.util.Map;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private long counter = 0L;
+    private int counter = 0;
 
-    private final Map<Long, Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
 
     @Override
     public List<Film> getFilms() {
@@ -25,7 +25,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film add(Film film) {
-        final long id = ++counter;
+        final int id = ++counter;
         film.setId(id);
         films.put(film.getId(), film);
         return film;
@@ -41,7 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(long id) {
+    public Film getFilm(int id) {
         return films.get(id);
     }
 

@@ -35,9 +35,9 @@ public class UserService {
         return storage.update(user);
     }
 
-    public void addFriend(long userId, long friendId) {
-        storage.getUsers().get((int) userId).getFriends().add(friendId);
-        storage.getUsers().get((int) friendId).getFriends().add(userId);
+    public void addFriend(int userId, int friendId) {
+        storage.getUsers().get(userId).getFriends().add(friendId);
+        storage.getUsers().get(friendId).getFriends().add(userId);
     }
 
     public void deleteFriend(long userId, long friendId) {

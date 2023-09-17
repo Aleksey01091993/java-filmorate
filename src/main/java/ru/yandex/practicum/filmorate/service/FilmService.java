@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +17,9 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final FilmStorage storage;
 
-    @Autowired
-    public FilmService(FilmStorage storage) {
+    public FilmService(@Autowired
+                       @Qualifier(value = "FilmDbStorage")
+                       FilmStorage storage) {
         this.storage = storage;
     }
 
@@ -33,11 +36,11 @@ public class FilmService {
         return storage.add(film);
     }
 
-    public void addLike(long filmId, long userId) {
+    public void addLike(int filmId, int userId) {
         storage.getFilms().get((int) filmId).getLikes().add(userId);
     }
 
-    public Film getFilm(long id) {
+    public Film getFilm(int id) {
         return storage.getFilm(id);
     }
 
@@ -51,7 +54,7 @@ public class FilmService {
             ids = id;
         }
         List<Film> films = new ArrayList<>();
-        List<Film> sort = storage.getFilms().stream().sorted((o1, o2) -> o1.getLikes().size() - o2.getLikes().size()).collect(Collectors.toList());
+        List<Film> sort = storage.getFilms().stream().sorted(Comparator.comparingInt(o -> o.getLikes().size())).toList();
         for (int i = 0; i < ids; i++) {
             films.add(sort.get(i));
         }

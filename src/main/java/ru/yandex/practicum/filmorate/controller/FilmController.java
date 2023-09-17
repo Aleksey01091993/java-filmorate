@@ -28,7 +28,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable long id) {
+    public Film getFilm(@PathVariable int id) {
         log.info("Пришел GET запрос /films с телом: {id}", id);
         Film film = service.getFilm(id);
         log.info("Отправлен ответ для GET запроса /films с телом: {id}", film);
@@ -63,14 +63,14 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable long id, @PathVariable long userId) {
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Пришел PUT запрос /films/{id}/like/{userId}", id, userId);
         service.addLike(id, userId);
         log.info("Отправлен ответ для PUT запроса /films/{id}/like/{userId}");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Пришел DELETE запрос /films/{id}/like/{userId}", id, userId);
         service.deleteLike(id, userId);
         log.info("Отправлен ответ для DELETE запроса /films/{id}/like/{userId}");

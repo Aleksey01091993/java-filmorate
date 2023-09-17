@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable long id) {
+    public User getUser(@PathVariable int id) {
         log.info("Пришел GET запрос /users с телом: {id}", id);
         User user = service.getUser(id);
         log.info("Отправлен ответ для GET запроса /users с телом: {id}", user);
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Пришел PUT запрос /users/{id}/friends/{friendId}", id, friendId);
         service.addFriend(id, friendId);
         log.info("Отправлен ответ для PUT запроса /users/{id}/friends/{friendId}");
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable long id, long friendId) {
+    public void deleteFriend(@PathVariable int id, int friendId) {
         log.info("Пришел DELETE запрос /users/{id}/friends/{friendId}", id, friendId);
         service.deleteFriend(id, friendId);
         log.info("Отправлен ответ для DELETE запроса /users/{id}/friends/{friendId}");
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> friends(@PathVariable long id) {
+    public List<User> friends(@PathVariable int id) {
         log.info("Пришел GET запрос /users/{id}/friends", id);
         List<User> friends = service.friends(id);
         log.info("Отправлен ответ для GET запроса /users/{id}/friends", friends);
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> mutualFriends(@PathVariable long id, @PathVariable long otherId) {
+    public List<User> mutualFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Пришел GET запрос /users/{id}/friends/common/{otherId}", id, otherId);
         List<User> friends = service.mutualFriends(id, otherId);
         log.info("Отправлен ответ для GET запроса /users/{id}/friends/common/{otherId}", friends);
