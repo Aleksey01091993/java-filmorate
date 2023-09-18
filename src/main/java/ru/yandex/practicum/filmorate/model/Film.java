@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -13,7 +15,7 @@ import java.util.Set;
 public class Film {
     private Integer id;
     private String mpa;
-    private String genre;
+    private List<String> genre;
     @NotBlank
     private String name;
     @Size(max = 200)
@@ -26,13 +28,13 @@ public class Film {
     public Film() {
     }
 
-    public Film(String name, String description, LocalDate releaseDate, float duration, String genre, String mpa) {
+    public Film(String name, String description, LocalDate releaseDate, float duration, String mpa) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.likes = new HashSet<>();
-        this.genre = genre;
+        this.genre = new ArrayList<>();
         this.mpa = mpa;
     }
 }
