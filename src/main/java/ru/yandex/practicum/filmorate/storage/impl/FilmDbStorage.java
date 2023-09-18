@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
@@ -45,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
                         "release_date, " +
                         "duration, " +
                         "likes) " +
-                        "values (?, ?, ?, ?, ?, ?, ?, ?)",
+                        " values (?, ?, ?, ?, ?, ?, ?, ?)",
                 film.getId(),
                 film.getMpa(),
                 film.getGenre(),
@@ -53,7 +52,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
-                film.getLikes()
+                film.getLikes().size()
         );
         return film;
     }
@@ -64,24 +63,15 @@ public class FilmDbStorage implements FilmStorage {
             throw new ValidationException("Not found key: " + film.getId());
         }
         jdbcTemplate.update(
-                "insert into films(" +
-                        "id, " +
-                        "mpa, " +
-                        "genre, " +
-                        "name, " +
-                        "description, " +
-                        "release_date, " +
-                        "duration, " +
-                        "likes) " +
-                        "values (?, ?, ?, ?, ?, ?, ?, ?)",
-                film.getId(),
-                film.getMpa(),
-                film.getGenre(),
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                film.getLikes()
+                "update films set " +
+                        "mpa = " + film.getMpa() +
+                        ", genre = " + film.getGenre() +
+                        ", name = " + film.getName() +
+                        ", description = " + film.getDescription() +
+                        ", release_date = " + film.getReleaseDate() +
+                        ", duration = " + film.getDuration() +
+                        ", likes = ) " + film.getLikes().size() +
+                        " where id = " + film.getId()
         );
         return film;
     }

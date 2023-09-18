@@ -22,8 +22,11 @@ public class User {
     private String name;
     @Future
     private LocalDate birthday;
-    private boolean friendShip;
+    private Boolean friendShip;
     private Set<Integer> friends;
+
+    public User() {
+    }
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;

@@ -11,5 +11,5 @@ public interface UserStorage {
     List<User> getUsers();
     User add(User user);
     User update(User user);
-    User getUser(Long id);
+    User getUser(int id);
 }
