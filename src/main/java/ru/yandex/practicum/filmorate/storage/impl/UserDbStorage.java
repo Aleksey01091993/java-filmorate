@@ -79,6 +79,26 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(sql, this::mapRow, id);
     }
 
+    @Override
+    public List<User> mutualFriends(long userId, long friendId) {
+        return null;
+    }
+
+    @Override
+    public List<User> friends(long userId) {
+        return null;
+    }
+
+    @Override
+    public void deleteFriend(long userId, long friendId) {
+
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) {
+
+    }
+
     private User mapRow(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("id"));

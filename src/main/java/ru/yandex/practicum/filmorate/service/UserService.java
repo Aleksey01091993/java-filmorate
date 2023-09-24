@@ -15,10 +15,7 @@ public class UserService {
 
     private final UserStorage storage;
 
-    public UserService(
-            @Autowired
-            @Qualifier("UserDbStorage")
-            UserStorage storage) {
+    public UserService(@Autowired @Qualifier("UserDbStorage") UserStorage storage) {
         this.storage = storage;
     }
 
@@ -39,35 +36,19 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        storage.getUsers().get(userId).getFriends().add(friendId);
-        storage.getUsers().get(friendId).getFriends().add(userId);
+        storage.addFriend(userId, friendId);
     }
 
     public void deleteFriend(long userId, long friendId) {
-        storage.getUsers().get((int) userId).getFriends().remove(friendId);
-        storage.getUsers().get((int) friendId).getFriends().remove(userId);
+        deleteFriend(userId, friendId);
     }
 
     public List<User> friends(long userId) {
-        List<User> users = new ArrayList<>();
-        for (User u : storage.getUsers()) {
-            long ids = u.getId();
-            if (storage.getUsers().get((int) userId).getFriends().contains(ids)) {
-                users.add(u);
-            }
-        }
-        return users;
+        return storage.friends(userId);
     }
 
     public List<User> mutualFriends(long userId, long friendId) {
-        List<User> users = new ArrayList<>();
-        for (User u : storage.getUsers()) {
-            long ids = u.getId();
-            if (storage.getUsers().get((int) userId).getFriends().contains(ids) && storage.getUsers().get((int) friendId).getFriends().contains(ids)) {
-                users.add(u);
-            }
-        }
-        return users;
+        return storage.mutualFriends(userId, friendId);
     }
 
 }

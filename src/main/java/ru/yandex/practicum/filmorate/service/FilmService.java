@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final FilmStorage storage;
 
-    public FilmService(@Autowired
-                       @Qualifier(value = "FilmDbStorage")
-                       FilmStorage storage) {
+    public FilmService(@Autowired @Qualifier(value = "FilmDbStorage") FilmStorage storage) {
         this.storage = storage;
     }
 
@@ -31,13 +29,12 @@ public class FilmService {
         return storage.add(film);
     }
 
-
     public Film update(Film film) {
         return storage.add(film);
     }
 
     public void addLike(int filmId, int userId) {
-        storage.getFilms().get((int) filmId).getLikes().add(userId);
+        storage.addLike(filmId, userId);
     }
 
     public Film getFilm(int id) {
@@ -45,20 +42,11 @@ public class FilmService {
     }
 
     public void deleteLike(long filmId, long userId) {
-        storage.getFilms().get((int) filmId).getLikes().remove(userId);
+        storage.deleteLike(filmId, userId);
     }
 
     public List<Film> topFilms(Integer id) {
-        int ids = 10;
-        if (id != null) {
-            ids = id;
-        }
-        List<Film> films = new ArrayList<>();
-        List<Film> sort = storage.getFilms().stream().sorted(Comparator.comparingInt(o -> o.getLikes().size())).toList();
-        for (int i = 0; i < ids; i++) {
-            films.add(sort.get(i));
-        }
-        return films;
+        return storage.topFilms(id);
     }
 
 

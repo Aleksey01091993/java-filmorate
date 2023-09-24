@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -43,6 +40,31 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilm(int id) {
         return films.get(id);
+    }
+
+    @Override
+    public List<Film> topFilms(Integer id) {
+        int ids = 10;
+        if (id != null) {
+            ids = id;
+        }
+        List<Film> films = new ArrayList<>(
+        getFilms().stream().sorted(Comparator.comparingInt(o -> o.getLikes().size())).toList()
+        );
+        for (int i = 0; i < ids; i++) {
+            films.add(films.get(i));
+        }
+        return films;
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+        getFilms().get((int) filmId).getLikes().remove(userId);
+    }
+
+    @Override
+    public void addLike(int filmId, int userId) {
+        getFilms().get(filmId).getLikes().add(userId);
     }
 
 }
