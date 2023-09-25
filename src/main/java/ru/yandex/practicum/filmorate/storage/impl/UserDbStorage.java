@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -35,15 +36,7 @@ public class UserDbStorage implements UserStorage {
         final int id = ++counter;
         user.setId(id);
         jdbcTemplate.update(
-                "insert into persons(" +
-                        "id, " +
-                        "email, " +
-                        "login, " +
-                        "name, " +
-                        "birthdate, " +
-                        "friendship, " +
-                        "friends, " +
-                        " values (?, ?, ?, ?, ?, ?, ?)",
+                "insert into persons values (?, ?, ?, ?, ?, ?, ?)",
                 user.getId(),
                 user.getEmail(),
                 user.getLogin(),
@@ -81,22 +74,43 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> mutualFriends(long userId, long friendId) {
-        return null;
+        List<Integer> idFriends = jdbcTemplate.query("SELECT friends_id FROM friends where person_id = " + userId,
+                (o1, o2) -> o1.getInt("friends_id"));
+        List<Integer> idFriends2 = jdbcTemplate.query("SELECT friends_id FROM friends where person_id = " + friendId,
+                (o1, o2) -> o1.getInt("friends_id"));
+        List<User> mutualFriends = new ArrayList<>();
+        for (int i: idFriends) {
+            for (int u: idFriends2) {
+                if (i == u) {
+                    mutualFriends.add(getUser(i));
+                }
+            }
+        }
+        return mutualFriends;
     }
 
     @Override
     public List<User> friends(long userId) {
-        return null;
+        String sql = "SELECT * FROM persons WHERE id ON (SELECT friends_id FROM friends WHERE person_id = ?)";
+        return jdbcTemplate.query(sql, this::mapRow, userId);
     }
 
     @Override
     public void deleteFriend(long userId, long friendId) {
-
+        jdbcTemplate.update("DELETE FROM friends WHERE person_id = ? AND friends_id = ?", userId, friendId);
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-
+            jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", userId, friendId);
+            Boolean is = jdbcTemplate.queryForObject(
+                    "SELECT MUTUAL_FRIENDS FROM friend_request WHERE friend_id = ? AND person_id = ?",
+                    Boolean.class, friendId, userId
+                    );
+            if (is != null) {
+                is = true;
+            }
+            jdbcTemplate.update("insert into friend_request values (?, ?, ?)", friendId, is, userId);
     }
 
     private User mapRow(ResultSet rs, int rowNum) throws SQLException {
