@@ -23,7 +23,7 @@ public class FilmDbStorage implements FilmStorage {
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+//
     @Override
     public List<Film> getFilms() {
         return this.jdbcTemplate.query(
