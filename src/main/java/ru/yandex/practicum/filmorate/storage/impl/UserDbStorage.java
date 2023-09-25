@@ -54,7 +54,7 @@ public class UserDbStorage implements UserStorage {
         );
         return user;
     }
-//
+
     @Override
     public User update(User user) {
         if (getUser(user.getId()) == null) {
