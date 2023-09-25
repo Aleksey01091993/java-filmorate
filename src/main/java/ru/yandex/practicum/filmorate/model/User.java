@@ -22,7 +22,6 @@ public class User {
     private String name;
     @Future
     private LocalDate birthday;
-    private Boolean friendShip;
     private Set<Integer> friends;
 
     public User() {

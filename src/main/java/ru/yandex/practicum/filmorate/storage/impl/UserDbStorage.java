@@ -36,14 +36,12 @@ public class UserDbStorage implements UserStorage {
         final int id = ++counter;
         user.setId(id);
         jdbcTemplate.update(
-                "insert into persons values (?, ?, ?, ?, ?, ?, ?)",
+                "insert into persons values (?, ?, ?, ?, ?)",
                 user.getId(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday(),
-                user.getFriendShip(),
-                user.getFriends().size()
+                user.getBirthday()
         );
         return user;
     }
@@ -54,21 +52,19 @@ public class UserDbStorage implements UserStorage {
             throw new ValidationException("Not found key: " + user.getId());
         }
         jdbcTemplate.update(
-                "update persons set" +
-                        " email = " + user.getEmail() +
-                        ", login = " + user.getLogin() +
-                        ", name = " + user.getName() +
-                        ", birthdate = " + user.getBirthday() +
-                        ", friendship = " + user.getFriendShip() +
-                        ", friends = " + user.getFriends().size() +
-                        " where id = " + user.getId()
+                "update persons set email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId()
         );
         return user;
     }
 
     @Override
     public User getUser(int id) {
-        String sql = "select * from persons where user_id = ?";
+        String sql = "select * from persons where id = ?";
         return jdbcTemplate.queryForObject(sql, this::mapRow, id);
     }
 
@@ -91,26 +87,32 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> friends(long userId) {
-        String sql = "SELECT * FROM persons WHERE id ON (SELECT friends_id FROM friends WHERE person_id = ?)";
+        String sql = "SELECT * FROM persons WHERE id IN (SELECT friends_id FROM friends WHERE person_id = ?)";
         return jdbcTemplate.query(sql, this::mapRow, userId);
     }
 
     @Override
     public void deleteFriend(long userId, long friendId) {
+
         jdbcTemplate.update("DELETE FROM friends WHERE person_id = ? AND friends_id = ?", userId, friendId);
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-            jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", userId, friendId);
-            Boolean is = jdbcTemplate.queryForObject(
-                    "SELECT MUTUAL_FRIENDS FROM friend_request WHERE friend_id = ? AND person_id = ?",
-                    Boolean.class, friendId, userId
-                    );
-            if (is != null) {
+        Integer isCount;
+            isCount = jdbcTemplate.queryForObject(
+                            "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE person_id = ?",
+                            Integer.class, userId);
+        boolean is = false;
+            if (isCount == 0) {
+                jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", userId, friendId);
+                jdbcTemplate.update("insert into friend_request values (?, ?, ?)", friendId, is, userId);
+            } else {
                 is = true;
+                jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", friendId, userId);
+                jdbcTemplate.update("update friend_request set mutual_friends = ? WHERE person_id = ?", is, userId);
             }
-            jdbcTemplate.update("insert into friend_request values (?, ?, ?)", friendId, is, userId);
+
     }
 
     private User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -120,13 +122,14 @@ public class UserDbStorage implements UserStorage {
         user.setLogin(rs.getString("login"));
         user.setName(rs.getString("name"));
         user.setBirthday(rs.getDate("birthday").toLocalDate());
-        user.setFriendShip(rs.getBoolean("friendship"));
         List<Integer> friends = jdbcTemplate.query(
-                "select person_id from friends where person_id = ?" + rs.getInt("id"), (rl, yt) -> rl.getInt("user_id"));
+                "select person_id from friends where person_id = " + rs.getInt("id"), (rl, yt) -> rl.getInt("user_id"));
         user.setFriends(new HashSet<>(friends));
 
         return user;
     }
+
+
 
 
 }
