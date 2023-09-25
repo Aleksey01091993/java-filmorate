@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,7 +39,7 @@ public class UserService {
     }
 
     public void deleteFriend(long userId, long friendId) {
-        deleteFriend(userId, friendId);
+        storage.deleteFriend(userId, friendId);
     }
 
     public List<User> friends(long userId) {
