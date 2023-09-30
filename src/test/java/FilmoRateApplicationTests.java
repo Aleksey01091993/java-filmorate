@@ -51,13 +51,24 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testFriendsTest() {
-        User user = userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
-        User user1 = userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
-        User user2 = userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
+        User user = userStorage.add(new User("1mr@ta.ru", "hjkj", "nam", LocalDate.now()));
+        User user1 = userStorage.add(new User("2mr@ta.ru", "hjkj", "nam", LocalDate.now()));
+        User user2 = userStorage.add(new User("3mr@ta.ru", "hjkj", "nam", LocalDate.now()));
         int userId = user.getId();
         int userId1 = user1.getId();
+        int userId2 = user2.getId();
         userStorage.addFriend(userId, userId1);
-        List<User> friends = userStorage.friends(userId);
         userStorage.addFriend(userId1, userId);
+        Assertions.assertEquals(user1, userStorage.friends(userId).get(0));
+        Assertions.assertEquals(user, userStorage.friends(userId1).get(0));
+        userStorage.addFriend(userId, userId2);
+        userStorage.addFriend(userId1, userId2);
+        Assertions.assertEquals(user2, userStorage.friends(userId).get(1));
+        Assertions.assertEquals(user2, userStorage.friends(userId1).get(1));
+        Assertions.assertEquals(userStorage.mutualFriends(userId, userId1).get(0), user2);
+        userStorage.deleteFriend(userId, userId2);
+        userStorage.deleteFriend(userId1, userId2);
+        System.out.println(userStorage.mutualFriends(userId, userId1));
+        Assertions.assertTrue(userStorage.mutualFriends(userId, userId1).isEmpty());
     }
 }

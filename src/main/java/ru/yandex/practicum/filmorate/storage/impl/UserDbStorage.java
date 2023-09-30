@@ -70,10 +70,10 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> mutualFriends(long userId, long friendId) {
-        List<Integer> idFriends = jdbcTemplate.query("SELECT friends_id FROM friends where person_id = " + userId,
-                (o1, o2) -> o1.getInt("friends_id"));
-        List<Integer> idFriends2 = jdbcTemplate.query("SELECT friends_id FROM friends where person_id = " + friendId,
-                (o1, o2) -> o1.getInt("friends_id"));
+        List<Integer> idFriends = jdbcTemplate.query("SELECT friend_id FROM friend_request where person_id = " + userId,
+                (o1, o2) -> o1.getInt("friend_id"));
+        List<Integer> idFriends2 = jdbcTemplate.query("SELECT friend_id FROM friend_request where person_id = " + friendId,
+                (o1, o2) -> o1.getInt("friend_id"));
         List<User> mutualFriends = new ArrayList<>();
         for (int i: idFriends) {
             for (int u: idFriends2) {
@@ -87,31 +87,65 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> friends(long userId) {
-        String sql = "SELECT * FROM persons WHERE id IN (SELECT friends_id FROM friends WHERE person_id = ?)";
-        return jdbcTemplate.query(sql, this::mapRow, userId);
+        Integer isCount;
+        isCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE person_id = ?",
+                Integer.class, userId);
+        if (isCount == 0) {
+            throw new ValidationException("ваш список друзей пуст");
+        } else {
+            String sql = "SELECT * FROM persons WHERE id IN (SELECT friend_id FROM friend_request WHERE person_id = ?)";
+            return jdbcTemplate.query(sql, this::mapRow, userId);
+        }
+
     }
 
     @Override
     public void deleteFriend(long userId, long friendId) {
+        Integer isUser = -1;
+        isUser = jdbcTemplate.queryForObject(
+                "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE friend_id = ? AND person_id = ?",
+                Integer.class, friendId, userId);
+        Integer isFriend = -1;
+        isFriend = jdbcTemplate.queryForObject(
+                "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE friend_id = ? AND person_id = ?",
+                Integer.class, userId, friendId);
+        if (isFriend == 1 && isUser == 1) {
+            jdbcTemplate.update("DELETE FROM friend_request WHERE person_id = ?", userId);
+            jdbcTemplate.update("update friend_request set mutual_friends = ? WHERE person_id = ?",
+                    Boolean.FALSE, friendId);
+        } else if (isFriend == 0 && isUser == 1) {
+            jdbcTemplate.update("DELETE FROM friend_request WHERE person_id = ?", userId);
+        } else {
+            throw new ValidationException("пользователь не является вашим другом или" +
+                    " неверно введены данные повторите папытку снова");
+        }
 
-        jdbcTemplate.update("DELETE FROM friends WHERE person_id = ? AND friends_id = ?", userId, friendId);
+
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-        Integer isCount;
-            isCount = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE person_id = ?",
-                            Integer.class, userId);
         boolean is = false;
-            if (isCount == 0) {
-                jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", userId, friendId);
-                jdbcTemplate.update("insert into friend_request values (?, ?, ?)", friendId, is, userId);
-            } else {
+        Integer isUser = -1;
+            isUser = jdbcTemplate.queryForObject(
+                            "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE friend_id = ? AND person_id = ?",
+                            Integer.class, friendId, userId);
+        Integer isFriend = -1;
+            isFriend = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(MUTUAL_FRIENDS) FROM friend_request WHERE friend_id = ? AND person_id = ?",
+                    Integer.class, userId, friendId);
+            if (isFriend == 0 && isUser == 0) {
+                jdbcTemplate.update("insert into friend_request values (?, ?, ?)", userId, is, friendId);
+            } else if (isUser == 0 && isFriend == 1) {
                 is = true;
-                jdbcTemplate.update("INSERT INTO FRIENDS VALUES (?, ?)", friendId, userId);
-                jdbcTemplate.update("update friend_request set mutual_friends = ? WHERE person_id = ?", is, userId);
+                jdbcTemplate.update("insert into friend_request values (?, ?, ?)", userId, is, friendId);
+                jdbcTemplate.update("update friend_request set mutual_friends = ? WHERE person_id = ? AND friend_id = ?",
+                        is, friendId, userId);
+            } else {
+                throw new ValidationException("вы уже являетесь друзьями или неверно веденны данные попробуйте снова");
             }
+
 
     }
 
