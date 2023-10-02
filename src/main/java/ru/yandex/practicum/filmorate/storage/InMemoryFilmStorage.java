@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 
 
 import java.util.*;
@@ -55,6 +57,26 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.add(films.get(i));
         }
         return films;
+    }
+
+    @Override
+    public List<Genre> genres() {
+        return null;
+    }
+
+    @Override
+    public Genre genre(int id) {
+        return null;
+    }
+
+    @Override
+    public List<MPA> allMpa() {
+        return null;
+    }
+
+    @Override
+    public MPA mpa(int id) {
+        return null;
     }
 
     @Override

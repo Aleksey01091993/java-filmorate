@@ -11,12 +11,9 @@ birthday timestamp
 CREATE TABLE FILMS(
 id INTEGER PRIMARY KEY,
 name varchar(255),
-genre varchar(255),
-mpa varchar(255),
 description varchar(200),
 release_date timestamp,
-duration real,
-likes int
+duration real
 );
 
 
@@ -24,15 +21,7 @@ likes int
 
 CREATE TABLE LIKES(
 film_id INTEGER REFERENCES FILMS(id),
-like_person_id INTEGER UNIQUE REFERENCES PERSONS(id)
-);
-
-
-
-
-CREATE TABLE FRIENDS(
-person_id INTEGER REFERENCES PERSONS(id),
-friends_id INTEGER
+like_person_id INTEGER REFERENCES PERSONS(id)
 );
 
 

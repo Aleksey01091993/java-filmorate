@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 
@@ -81,6 +83,39 @@ public class FilmController {
         List<Film> films = service.topFilms(count);
         log.info("Отправлен ответ для GET запроса /films/popular?count={count}", films);
         return films;
+    }
+
+    @GetMapping("/genres")
+    public List<Genre> genres () {
+        log.info("Пришел GET запрос /genres с телом: {}");
+        List<Genre> genres = service.genres();
+        log.info("Отправлен ответ для GET запроса /genres с телом: {}", genres);
+        return genres;
+    }
+
+    @GetMapping("/genres/{id}")
+    public Genre getGenre(@PathVariable int id) {
+        log.info("Пришел GET запрос /genres с телом: {id}", id);
+        Genre genre = service.genre(id);
+        log.info("Отправлен ответ для GET запроса /genres с телом: {id}", genre);
+        return genre;
+
+    }
+
+    @GetMapping("/mpa")
+    public List<MPA> allMpa () {
+        log.info("Пришел GET запрос /mpa с телом: {}");
+        List<MPA> mpa = service.allMpa();
+        log.info("Отправлен ответ для GET запроса /mpa с телом: {}", mpa);
+        return mpa;
+    }
+
+    @GetMapping("/mpa/{id}")
+    public MPA getMpa(@PathVariable int id) {
+        log.info("Пришел GET запрос /mpa с телом: {id}", id);
+        MPA mpa = service.mpa(id);
+        log.info("Отправлен ответ для GET запроса /mpa с телом: {id}", mpa);
+        return mpa;
     }
 
     private void check(Film film) {
