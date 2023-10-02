@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,7 @@ public class User {
     private String name;
     @Future
     private LocalDate birthday;
+    @JsonIgnore
     private Set<Integer> friends;
 
     public User() {

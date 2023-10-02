@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.impl;
+package ru.yandex.practicum.filmorate.storage.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,6 +48,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
+
         if (getUser(user.getId()) == null) {
             throw new ValidationException("Not found key: " + user.getId());
         }

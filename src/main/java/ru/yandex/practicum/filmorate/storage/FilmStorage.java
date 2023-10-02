@@ -16,13 +16,6 @@ public interface FilmStorage {
     void addLike(int filmId, int userId);
     void deleteLike(long filmId, long userId);
     List<Film> topFilms(Integer id);
-    public List<Genre> genres();
-
-    public Genre genre(int id);
-
-    public List<MPA> allMpa();
-
-    public MPA mpa(int id);
 
 
 }

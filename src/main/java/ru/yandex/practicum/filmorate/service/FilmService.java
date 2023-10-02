@@ -1,18 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 
-
+@Slf4j
 @Service
 public class FilmService {
     private final FilmStorage storage;
@@ -26,10 +27,12 @@ public class FilmService {
     }
 
     public Film add(Film film) {
+        check(film);
         return storage.add(film);
     }
 
     public Film update(Film film) {
+        check(film);
         return storage.add(film);
     }
 
@@ -49,23 +52,14 @@ public class FilmService {
         return storage.topFilms(id);
     }
 
-    public List<Genre> genres() {
-        return storage.genres();
+    private void check(Film film) {
+        log.info("лог.пришел запрос Post /films с телом: request");
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 27))) {
+            log.debug("дата релиза — не раньше 28.12.1895");
+            throw new ValidationException("дата релиза — не раньше 28.12.1895");
+        } else {
+            log.info("отправлен ответ с телом: response");
+        }
     }
-
-    public Genre genre(int id) {
-        return  storage.genre(id);
-    }
-
-    public List<MPA> allMpa() {
-        return storage.allMpa();
-    }
-
-    public MPA mpa(int id) {
-        return  storage.mpa(id);
-    }
-
-
-
 
 }

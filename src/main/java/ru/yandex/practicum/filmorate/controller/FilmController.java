@@ -30,16 +30,16 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable int id) {
-        log.info("Пришел GET запрос /films с телом: {id}", id);
+        log.info("Пришел GET запрос /films с телом: {}", id);
         Film film = service.getFilm(id);
-        log.info("Отправлен ответ для GET запроса /films с телом: {id}", film);
+        log.info("Отправлен ответ для GET запроса /films с телом: {}", film);
         return film;
 
     }
 
     @GetMapping()
     public List<Film> getFilms() {
-        log.info("Пришел GET запрос /films с телом: {}");
+        log.info("Пришел GET запрос /films");
         List<Film> films = service.getFilms();
         log.info("Отправлен ответ для GET запроса /films с телом: {}", films);
         return films;
@@ -48,7 +48,6 @@ public class FilmController {
     @PostMapping()
     public Film add(@Validated @RequestBody Film film) {
         log.info("Пришел POST запрос /films с телом: {}", film);
-        check(film);
         Film response = service.add(film);
         log.info("Отправлен ответ для POST запроса /films с телом: {}", response);
         return response;
@@ -57,7 +56,6 @@ public class FilmController {
     @PutMapping()
     public Film update(@Validated @RequestBody Film film) {
         log.info("Пришел PUT запрос /films с телом: {}", film);
-        check(film);
         Film response = service.update(film);
         log.info("Отправлен ответ для PUT запроса /films с телом: {}", response);
         return response;
@@ -65,68 +63,31 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        log.info("Пришел PUT запрос /films/{id}/like/{userId}", id, userId);
+        log.info("Пришел PUT запрос /films/{}/like/{}", id, userId);
         service.addLike(id, userId);
-        log.info("Отправлен ответ для PUT запроса /films/{id}/like/{userId}");
+        log.info("Отправлен ответ для PUT запроса /films/{}/like/{}", id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        log.info("Пришел DELETE запрос /films/{id}/like/{userId}", id, userId);
+        log.info("Пришел DELETE запрос /films/{}/like/{}", id, userId);
         service.deleteLike(id, userId);
-        log.info("Отправлен ответ для DELETE запроса /films/{id}/like/{userId}");
+        log.info("Отправлен ответ для DELETE запроса /films/{}/like/{}", id, userId);
     }
 
     @GetMapping("/popular?count={count}")
     public List<Film> getTopFilms(@PathVariable(required = false) int count) {
-        log.info("Пришел GET запрос /films/popular?count={count}", count);
+        log.info("Пришел GET запрос /films/popular?count={}", count);
         List<Film> films = service.topFilms(count);
-        log.info("Отправлен ответ для GET запроса /films/popular?count={count}", films);
+        log.info("Отправлен ответ для GET запроса /films/popular?count={}", films);
         return films;
     }
 
-    @GetMapping("/genres")
-    public List<Genre> genres () {
-        log.info("Пришел GET запрос /genres с телом: {}");
-        List<Genre> genres = service.genres();
-        log.info("Отправлен ответ для GET запроса /genres с телом: {}", genres);
-        return genres;
-    }
 
-    @GetMapping("/genres/{id}")
-    public Genre getGenre(@PathVariable int id) {
-        log.info("Пришел GET запрос /genres с телом: {id}", id);
-        Genre genre = service.genre(id);
-        log.info("Отправлен ответ для GET запроса /genres с телом: {id}", genre);
-        return genre;
 
-    }
 
-    @GetMapping("/mpa")
-    public List<MPA> allMpa () {
-        log.info("Пришел GET запрос /mpa с телом: {}");
-        List<MPA> mpa = service.allMpa();
-        log.info("Отправлен ответ для GET запроса /mpa с телом: {}", mpa);
-        return mpa;
-    }
 
-    @GetMapping("/mpa/{id}")
-    public MPA getMpa(@PathVariable int id) {
-        log.info("Пришел GET запрос /mpa с телом: {id}", id);
-        MPA mpa = service.mpa(id);
-        log.info("Отправлен ответ для GET запроса /mpa с телом: {id}", mpa);
-        return mpa;
-    }
 
-    private void check(Film film) {
-        log.info("лог.пришел запрос Post /films с телом: request");
-         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 27))) {
-            log.debug("дата релиза — не раньше 28.12.1895");
-            throw new ValidationException("дата релиза — не раньше 28.12.1895");
-        } else {
-            log.info("отправлен ответ с телом: response");
-        }
-    }
 
 
 }

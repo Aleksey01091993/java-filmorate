@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.impl.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.impl.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.impl.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
