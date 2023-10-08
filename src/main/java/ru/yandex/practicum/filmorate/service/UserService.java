@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FriendsDao;
 
 import java.util.List;
 
@@ -38,21 +39,6 @@ public class UserService {
         return storage.update(user);
     }
 
-    public void addFriend(int userId, int friendId) {
-        storage.addFriend(userId, friendId);
-    }
-
-    public void deleteFriend(long userId, long friendId) {
-        storage.deleteFriend(userId, friendId);
-    }
-
-    public List<User> friends(long userId) {
-        return storage.friends(userId);
-    }
-
-    public List<User> mutualFriends(long userId, long friendId) {
-        return storage.mutualFriends(userId, friendId);
-    }
 
     private void check(User user) {
         log.info("лог.пришел запрос Post /Users с телом: request");

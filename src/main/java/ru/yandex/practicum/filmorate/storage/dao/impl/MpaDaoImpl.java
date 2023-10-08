@@ -26,4 +26,5 @@ public class MpaDaoImpl implements MpaDao {
         return  jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE id = ?",
                 (o1, o2) -> new MPA(o1.getInt("id"), o1.getString("mpa")), id);
     }
+
 }

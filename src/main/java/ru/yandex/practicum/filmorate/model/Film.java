@@ -15,8 +15,9 @@ import java.util.Set;
 @Data
 public class Film {
     private Integer id;
-    private Integer mpa;
-    private List<Integer> genre;
+    private Integer mpaId;
+    private MPA mpa;
+    private List<Genre> genre;
     @NotBlank
     private String name;
     @Size(max = 200)
@@ -30,13 +31,13 @@ public class Film {
     public Film() {
     }
 
-    public Film(String name, String description, LocalDate releaseDate, float duration, Integer mpa, List<Integer> genre) {
+    public Film(String name, String description, LocalDate releaseDate, float duration, Integer mpaId) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.mpaId = mpaId;
         this.likes = new HashSet<>();
-        this.mpa = mpa;
-        this.genre = genre;
+        this.genre = new ArrayList<>();
     }
 }

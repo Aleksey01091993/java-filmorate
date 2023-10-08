@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
+import ru.yandex.practicum.filmorate.storage.dao.LikesDao;
+import ru.yandex.practicum.filmorate.storage.dao.impl.GenreDaoImpl;
+import ru.yandex.practicum.filmorate.storage.dao.impl.LikesDaoImpl;
 
 
 import java.time.LocalDate;
@@ -17,13 +21,21 @@ import java.util.List;
 @Service
 public class FilmService {
     private final FilmStorage storage;
+    private final GenreDao genreDao;
 
-    public FilmService(@Autowired @Qualifier(value = "FilmDbStorage") FilmStorage storage) {
+
+    public FilmService(@Autowired @Qualifier(value = "FilmDbStorage") FilmStorage storage,
+                       @Autowired @Qualifier(value = "GenreDaoImpl") GenreDaoImpl genreDao
+                       ) {
         this.storage = storage;
+        this.genreDao = genreDao;
+
     }
 
     public List<Film> getFilms() {
-        return storage.getFilms();
+        final List<Film> films = storage.getFilms();
+        genreDao.load(films);
+        return films;
     }
 
     public Film add(Film film) {
@@ -36,17 +48,14 @@ public class FilmService {
         return storage.add(film);
     }
 
-    public void addLike(int filmId, int userId) {
-        storage.addLike(filmId, userId);
-    }
+
 
     public Film getFilm(int id) {
-        return storage.getFilm(id);
+        Film film = storage.getFilm(id);
+        film.setGenre(genreDao.loadGenre(id));
+        return film;
     }
 
-    public void deleteLike(long filmId, long userId) {
-        storage.deleteLike(filmId, userId);
-    }
 
     public List<Film> topFilms(Integer id) {
         return storage.topFilms(id);

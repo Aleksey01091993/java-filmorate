@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FriendsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 
@@ -18,10 +18,12 @@ import java.util.List;
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService service;
+    private final FriendsService friendsService;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, FriendsService friendsService) {
         this.service = service;
+        this.friendsService = friendsService;
     }
 
     @GetMapping()
@@ -59,7 +61,7 @@ public class UserController {
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Пришел PUT запрос /users/{}/friends/{}", id, friendId);
-        service.addFriend(id, friendId);
+        friendsService.addFriend(id, friendId);
         log.info("Отправлен ответ для PUT запроса /users/{}/friends/{}", id, friendId);
 
     }
@@ -67,7 +69,7 @@ public class UserController {
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable int id, int friendId) {
         log.info("Пришел DELETE запрос /users/{}/friends/{}", id, friendId);
-        service.deleteFriend(id, friendId);
+        friendsService.deleteFriend(id, friendId);
         log.info("Отправлен ответ для DELETE запроса /users/{}/friends/{}", id, friendId);
 
     }
@@ -75,7 +77,7 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public List<User> friends(@PathVariable int id) {
         log.info("Пришел GET запрос /users/{}/friends", id);
-        List<User> friends = service.friends(id);
+        List<User> friends = friendsService.friends(id);
         log.info("Отправлен ответ для GET запроса /users/{}/friends", id);
         return friends;
     }
@@ -83,7 +85,7 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> mutualFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Пришел GET запрос /users/{}/friends/common/{}", id, otherId);
-        List<User> friends = service.mutualFriends(id, otherId);
+        List<User> friends = friendsService.mutualFriends(id, otherId);
         log.info("Отправлен ответ для GET запроса /users/{}/friends/common/{}", id, otherId);
         return friends;
     }

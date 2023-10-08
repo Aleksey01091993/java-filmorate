@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikesService;
 
 
 import java.time.LocalDate;
@@ -22,10 +23,12 @@ import java.util.List;
 public class FilmController {
 
     private final FilmService service;
+    private final LikesService likesService;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService, LikesService likesService) {
         this.service = filmService;
+        this.likesService = likesService;
     }
 
     @GetMapping("/{id}")
@@ -64,14 +67,14 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Пришел PUT запрос /films/{}/like/{}", id, userId);
-        service.addLike(id, userId);
+        likesService.addLike(id, userId);
         log.info("Отправлен ответ для PUT запроса /films/{}/like/{}", id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Пришел DELETE запрос /films/{}/like/{}", id, userId);
-        service.deleteLike(id, userId);
+        likesService.deleteLike(id, userId);
         log.info("Отправлен ответ для DELETE запроса /films/{}/like/{}", id, userId);
     }
 
