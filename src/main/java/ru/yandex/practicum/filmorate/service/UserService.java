@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.storage.dao.FriendsDao;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class UserService {
         return storage.getUsers();
     }
 
-    public User getUser(int id) {
+    public User getUser(int id) throws DataNotFoundException {
         return storage.getUser(id);
     }
 
@@ -34,7 +34,7 @@ public class UserService {
         return storage.add(user);
     }
 
-    public User update(User user) {
+    public User update(User user) throws DataNotFoundException {
         check(user);
         return storage.update(user);
     }

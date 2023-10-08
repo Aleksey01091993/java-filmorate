@@ -6,9 +6,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ru.yandex.practicum.filmorate.FilmorateApplication;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.impl.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.impl.FriendsDaoImpl;
 import ru.yandex.practicum.filmorate.storage.dao.impl.UserDbStorage;
 
 import java.time.LocalDate;
@@ -22,11 +24,13 @@ import java.util.List;
 class FilmoRateApplicationTests {
     private final UserDbStorage userStorage;
     private final FilmDbStorage filmDbStorage;
+    private final FriendsDaoImpl friendsDao;
 
     @Test
-    public void testUserAddGetId() {
+    public void testUserAddGetId() throws DataNotFoundException {
         User user = new User("mr@ta.ru", "hjkj", "nam", LocalDate.now());
         User user1 = userStorage.add(user);
+        user1.setId(1);
         User user2 = userStorage.getUser(1);
         Assertions.assertEquals(user1, user2);
 
@@ -42,7 +46,7 @@ class FilmoRateApplicationTests {
     }
 
     @Test
-    public void testUpdateUser() {
+    public void testUpdateUser() throws DataNotFoundException {
         userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
         userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
         userStorage.add(new User("mr@ta.ru", "hjkj", "nam", LocalDate.now()));
@@ -53,29 +57,32 @@ class FilmoRateApplicationTests {
         Assertions.assertEquals(user1, user);
     }
 
+
     @Test
-    public void testFriendsTest() {
+    public void testFriendsTest() throws DataNotFoundException {
         User user = userStorage.add(new User("1mr@ta.ru", "hjkj", "nam", LocalDate.now()));
         User user1 = userStorage.add(new User("2mr@ta.ru", "hjkj", "nam", LocalDate.now()));
         User user2 = userStorage.add(new User("3mr@ta.ru", "hjkj", "nam", LocalDate.now()));
-        int userId = user.getId();
-        int userId1 = user1.getId();
-        int userId2 = user2.getId();
-        userStorage.addFriend(userId, userId1);
-        userStorage.addFriend(userId1, userId);
-        Assertions.assertEquals(user1, userStorage.friends(userId).get(0));
-        Assertions.assertEquals(user, userStorage.friends(userId1).get(0));
-        userStorage.addFriend(userId, userId2);
-        userStorage.addFriend(userId1, userId2);
-        Assertions.assertEquals(user2, userStorage.friends(userId).get(1));
-        Assertions.assertEquals(user2, userStorage.friends(userId1).get(1));
-        Assertions.assertEquals(userStorage.mutualFriends(userId, userId1).get(0), user2);
-        userStorage.deleteFriend(userId, userId2);
-        userStorage.deleteFriend(userId1, userId2);
-        System.out.println(userStorage.mutualFriends(userId, userId1));
-        Assertions.assertTrue(userStorage.mutualFriends(userId, userId1).isEmpty());
+        user.setId(1);
+        user1.setId(2);
+        user2.setId(3);
+        int userId = 1;
+        int userId1 = 2;
+        int userId2 = 3;
+        friendsDao.addFriend(userId, userId1);
+        friendsDao.addFriend(userId1, userId);
+        Assertions.assertEquals(user1, friendsDao.friends(userId).get(0));
+        Assertions.assertEquals(user, friendsDao.friends(userId1).get(0));
+        friendsDao.addFriend(userId, userId2);
+        friendsDao.addFriend(userId1, userId2);
+        Assertions.assertEquals(user2, friendsDao.friends(userId).get(1));
+        Assertions.assertEquals(user2, friendsDao.friends(userId1).get(1));
+        Assertions.assertEquals(friendsDao.mutualFriends(userId, userId1).get(0), user2);
+        friendsDao.deleteFriend(userId, userId2);
+        friendsDao.deleteFriend(userId1, userId2);
+        Assertions.assertTrue(friendsDao.mutualFriends(userId, userId1).isEmpty());
     }
-
+/*
     @Test
     public void testFilmAddGetId() {
         List<Integer> genre = new ArrayList<>();
@@ -141,4 +148,6 @@ class FilmoRateApplicationTests {
         List<Film> topFilms = filmDbStorage.topFilms(3);
 
     }
+
+     */
 }

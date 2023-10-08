@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FriendsService;
@@ -43,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public User update(@RequestBody User user) {
+    public User update(@RequestBody User user) throws DataNotFoundException {
         log.info("Пришел PUT запрос /users с телом: {}", user);
         User response = service.update(user);
         log.info("Отправлен ответ для PUT запроса /users с телом: {}", response);
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable int id) {
+    public User getUser(@PathVariable int id) throws DataNotFoundException {
         log.info("Пришел GET запрос /users с телом: {}", id);
         User user = service.getUser(id);
         log.info("Отправлен ответ для GET запроса /users с телом: {}", user);
@@ -83,7 +84,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> mutualFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<User> mutualFriends(@PathVariable int id, @PathVariable int otherId) throws DataNotFoundException {
         log.info("Пришел GET запрос /users/{}/friends/common/{}", id, otherId);
         List<User> friends = friendsService.mutualFriends(id, otherId);
         log.info("Отправлен ответ для GET запроса /users/{}/friends/common/{}", id, otherId);

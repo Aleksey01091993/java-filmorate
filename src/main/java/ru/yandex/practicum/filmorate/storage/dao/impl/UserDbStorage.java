@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -26,14 +25,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getUsers() {
-        String sql = "select * from persons";
+        String sql = "select * from users";
         return this.jdbcTemplate.query(sql, this::mapRow);
     }
 
     @Override
     public User add(User user) {
         jdbcTemplate.update(
-                "insert into persons values (?, ?, ?, ?)",
+                "insert into users (Email, Login, Name, Birthday) values (?, ?, ?, ?)",
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
@@ -49,7 +48,7 @@ public class UserDbStorage implements UserStorage {
             throw new ValidationException("Not found key: " + user.getId());
         }
         jdbcTemplate.update(
-                "update persons set email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
+                "update users set email = ?, login = ?, name = ?, birthday = ? WHERE id = ?",
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
@@ -61,7 +60,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUser(int id) throws DataNotFoundException {
-        String sql = "select * from persons where id = ?";
+        String sql = "select * from users where id = ?";
         List<User> user = jdbcTemplate.query(sql, this::mapRow, id);
         if (user.size() != 1) {
             throw new DataNotFoundException("user id=" + id);
@@ -77,9 +76,6 @@ public class UserDbStorage implements UserStorage {
         user.setLogin(rs.getString("login"));
         user.setName(rs.getString("name"));
         user.setBirthday(rs.getDate("birthday").toLocalDate());
-        List<Integer> friends = jdbcTemplate.query(
-                "select person_id from friends where person_id = " + rs.getInt("id"), (rl, yt) -> rl.getInt("user_id"));
-        user.setFriends(new HashSet<>(friends));
 
         return user;
     }

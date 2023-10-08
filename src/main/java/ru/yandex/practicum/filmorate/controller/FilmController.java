@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
@@ -65,14 +66,14 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable int id, @PathVariable int userId) {
+    public void addLike(@PathVariable int id, @PathVariable int userId) throws DataNotFoundException {
         log.info("Пришел PUT запрос /films/{}/like/{}", id, userId);
         likesService.addLike(id, userId);
         log.info("Отправлен ответ для PUT запроса /films/{}/like/{}", id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) throws DataNotFoundException {
         log.info("Пришел DELETE запрос /films/{}/like/{}", id, userId);
         likesService.deleteLike(id, userId);
         log.info("Отправлен ответ для DELETE запроса /films/{}/like/{}", id, userId);

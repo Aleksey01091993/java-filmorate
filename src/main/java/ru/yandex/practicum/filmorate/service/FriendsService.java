@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.FriendsDao;
 
@@ -29,7 +30,7 @@ public class FriendsService {
         return friends.friends(userId);
     }
 
-    public List<User> mutualFriends(long userId, long friendId) {
+    public List<User> mutualFriends(long userId, long friendId) throws DataNotFoundException {
         return friends.mutualFriends(userId, friendId);
     }
 

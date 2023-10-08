@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -25,14 +26,16 @@ public class LikesService {
         this.userStorage = userStorage;
     }
 
-    public void addLike(int filmId, int userId) {
+    public void addLike(int filmId, int userId) throws DataNotFoundException {
         final Film film = storage.getFilm(filmId);
         final User user = userStorage.getUser(userId);
         likesDao.addLike(film.getId(), user.getId());
     }
 
-    public void deleteLike(long filmId, long userId) {
-        likesDao.deleteLike(filmId, userId);
+    public void deleteLike(int filmId, int userId) throws DataNotFoundException {
+        final Film film = storage.getFilm(filmId);
+        final User user = userStorage.getUser(userId);
+        likesDao.addLike(film.getId(), user.getId());
     }
 
 }

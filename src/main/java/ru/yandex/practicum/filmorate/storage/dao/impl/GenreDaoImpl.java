@@ -23,13 +23,13 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public List<Genre> genres() {
         return  jdbcTemplate.query("SELECT * FROM GENRE",
-                (o1, o2) -> new Genre(o1.getInt("id"), o1.getString("genre")));
+                (o1, o2) -> new Genre(o1.getInt("id"), o1.getString("name")));
     }
 
     @Override
     public Genre genre(int id) {
         return  jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE id = ?",
-                (o1, o2) -> new Genre(o1.getInt("id"), o1.getString("genre")), id);
+                (o1, o2) -> new Genre(o1.getInt("id"), o1.getString("name")), id);
     }
 
     @Override

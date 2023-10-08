@@ -25,6 +25,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilms() {
+
         return this.jdbcTemplate.query(
                 "select * from FILMS f, MPA m where f.MPA_ID = m.MPA_ID", this::mapRow
         );
@@ -73,19 +74,13 @@ public class FilmDbStorage implements FilmStorage {
         if (id != null) {
             ids = id;
         }
-
-        List<Integer> film_id = jdbcTemplate.query(
-                "SELECT film_id " +
-                    "FROM likes " +
-                    "GROUP BY film_id " +
-                    "ORDER BY COUNT(like_users_id) DESC " +
-                    "LIMIT ?;", (o1, o2) -> o1.getInt("film_id"), ids
-        );
-        List<Film> topFilms = new ArrayList<>();
-        for (int i:film_id) {
-            topFilms.add(getFilm(i));
-        }
-        return topFilms;
+        String inSql = "select * " +
+                "from FILMS f, MPA m, LIKES l " +
+                "where f.MPA_ID = m.MPA_ID AND l.film_id = f.id " +
+                "GROUP BY film_id " +
+                "ORDER BY COUNT(like_users_id) DESC " +
+                "LIMIT ?;";
+        return jdbcTemplate.query(inSql, this::mapRow, ids);
     }
 
 

@@ -58,7 +58,9 @@ public class FilmService {
 
 
     public List<Film> topFilms(Integer id) {
-        return storage.topFilms(id);
+        final List<Film> films = storage.topFilms(id);
+        genreDao.load(films);
+        return films;
     }
 
     private void check(Film film) {

@@ -18,13 +18,13 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public List<MPA> allMpa() {
         return jdbcTemplate.query("SELECT * FROM mpa",
-                (o1, o2) -> new MPA(o1.getInt("id"), o1.getString("mpa")));
+                (o1, o2) -> new MPA(o1.getInt("id"), o1.getString("age_limit")));
     }
 
     @Override
     public MPA mpa(int id) {
         return  jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE id = ?",
-                (o1, o2) -> new MPA(o1.getInt("id"), o1.getString("mpa")), id);
+                (o1, o2) -> new MPA(o1.getInt("id"), o1.getString("age_limit")), id);
     }
 
 }

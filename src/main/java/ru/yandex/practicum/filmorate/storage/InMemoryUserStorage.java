@@ -45,19 +45,19 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
-    @Override
+
     public void addFriend(int userId, int friendId) {
         getUsers().get(userId).getFriends().add(friendId);
         getUsers().get(friendId).getFriends().add(userId);
     }
 
-    @Override
+
     public void deleteFriend(long userId, long friendId) {
         getUsers().get((int) userId).getFriends().remove(friendId);
         getUsers().get((int) friendId).getFriends().remove(userId);
     }
 
-    @Override
+
     public List<User> friends(long userId) {
         List<User> users = new ArrayList<>();
         for (User u : getUsers()) {
@@ -69,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
         return users;
     }
 
-    @Override
+
     public List<User> mutualFriends(long userId, long friendId) {
         List<User> users = new ArrayList<>();
         for (User u : getUsers()) {
