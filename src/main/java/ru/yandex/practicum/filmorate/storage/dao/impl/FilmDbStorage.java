@@ -34,7 +34,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film add(Film film) {
         jdbcTemplate.update(
-                "insert into films values (?, ?, ?, ?, ?)",
+                "insert into films (name, mpa_id, description, release_date, duration) values (?, ?, ?, ?, ?)",
                 film.getName(),
                 film.getMpaId(),
                 film.getDescription(),
@@ -55,7 +55,8 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpaId(),
                 film.getDescription(),
                 film.getReleaseDate(),
-                film.getDuration()
+                film.getDuration(),
+                film.getId()
         );
         return film;
     }
@@ -74,19 +75,26 @@ public class FilmDbStorage implements FilmStorage {
         if (id != null) {
             ids = id;
         }
-        String inSql = "select * " +
-                "from FILMS f, MPA m, LIKES l " +
-                "where f.MPA_ID = m.MPA_ID AND l.film_id = f.id " +
-                "GROUP BY film_id " +
-                "ORDER BY COUNT(like_users_id) DESC " +
-                "LIMIT ?;";
-        return jdbcTemplate.query(inSql, this::mapRow, ids);
+
+        List<Integer> film_id = jdbcTemplate.query(
+                "SELECT film_id " +
+                        "FROM likes " +
+                        "GROUP BY film_id " +
+                        "ORDER BY COUNT(like_user_id) DESC " +
+                        "LIMIT ?;", (o1, o2) -> o1.getInt("film_id"), ids
+        );
+        List<Film> topFilms = new ArrayList<>();
+        for (int i:film_id) {
+            topFilms.add(getFilm(i));
+        }
+        return topFilms;
     }
 
 
     private Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         Film film = new Film();
         film.setId(rs.getInt("id"));
+        film.setMpaId(rs.getInt("mpa_id"));
         film.setMpa(new MPA(rs.getInt("mpa_id"), rs.getString("age_limit")));
         film.setName(rs.getString("name"));
         film.setDescription(rs.getString("description"));
