@@ -1,62 +1,76 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
+import ru.yandex.practicum.filmorate.storage.dao.LikesDao;
+import ru.yandex.practicum.filmorate.storage.dao.impl.GenreDaoImpl;
+import ru.yandex.practicum.filmorate.storage.dao.impl.LikesDaoImpl;
 
-import java.util.ArrayList;
+
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
-
+@Slf4j
 @Service
 public class FilmService {
     private final FilmStorage storage;
+    private final GenreDao genreDao;
 
-    @Autowired
-    public FilmService(FilmStorage storage) {
+
+    public FilmService(@Autowired @Qualifier(value = "FilmDbStorage") FilmStorage storage,
+                       @Autowired @Qualifier(value = "GenreDaoImpl") GenreDaoImpl genreDao
+                       ) {
         this.storage = storage;
+        this.genreDao = genreDao;
+
     }
 
     public List<Film> getFilms() {
-        return storage.getFilms();
-    }
-
-    public Film add(Film film) {
-        return storage.add(film);
-    }
-
-
-    public Film update(Film film) {
-        return storage.add(film);
-    }
-
-    public void addLike(long filmId, long userId) {
-        storage.getFilms().get((int) filmId).getLikes().add(userId);
-    }
-
-    public Film getFilm(long id) {
-        return storage.getFilm(id);
-    }
-
-    public void deleteLike(long filmId, long userId) {
-        storage.getFilms().get((int) filmId).getLikes().remove(userId);
-    }
-
-    public List<Film> topFilms(Integer id) {
-        int ids = 10;
-        if (id != null) {
-            ids = id;
-        }
-        List<Film> films = new ArrayList<>();
-        List<Film> sort = storage.getFilms().stream().sorted((o1, o2) -> o1.getLikes().size() - o2.getLikes().size()).collect(Collectors.toList());
-        for (int i = 0; i < ids; i++) {
-            films.add(sort.get(i));
-        }
+        final List<Film> films = storage.getFilms();
+        genreDao.load(films);
         return films;
     }
 
+    public Film add(Film film) {
+        check(film);
+        return storage.add(film);
+    }
+
+    public Film update(Film film) {
+        check(film);
+        return storage.add(film);
+    }
+
+
+
+    public Film getFilm(int id) {
+        Film film = storage.getFilm(id);
+        film.setGenre(genreDao.loadGenre(id));
+        return film;
+    }
+
+
+    public List<Film> topFilms(Integer id) {
+        final List<Film> films = storage.topFilms(id);
+        genreDao.load(films);
+        return films;
+    }
+
+    private void check(Film film) {
+        log.info("лог.пришел запрос Post /films с телом: request");
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 27))) {
+            log.debug("дата релиза — не раньше 28.12.1895");
+            throw new ValidationException("дата релиза — не раньше 28.12.1895");
+        } else {
+            log.info("отправлен ответ с телом: response");
+        }
+    }
 
 }
